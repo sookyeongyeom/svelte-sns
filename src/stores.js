@@ -7,7 +7,7 @@ function setCurrentArticlesPage() {
 
     const resetPage = () => set(1);
     const increPage = () => {
-        update((data) => data++);
+        update((data) => ++data);
         articles.fetchArticles();
     };
 
@@ -34,6 +34,8 @@ function setArticles() {
         const currentPage = get(currentArticlesPage);
 
         try {
+            loadingArticle.turnOnLoading();
+
             let path = `/articles/${currentPage}`;
 
             const options = {
@@ -60,9 +62,10 @@ function setArticles() {
 
                 datas.articleList = newArticles;
                 datas.totalPage = newData.totalPage;
-
                 return datas;
             });
+
+            loadingArticle.turnOffLoading();
         } catch (error) {
             throw error;
         }
@@ -72,6 +75,7 @@ function setArticles() {
         let resetValues = { ...initValues };
         set(resetValues);
         currentArticlesPage.resetPage();
+        articlePageLock.set(false);
     };
 
     return {
@@ -81,7 +85,26 @@ function setArticles() {
     };
 }
 
-function setLoadingArticle() {}
+function setLoadingArticle() {
+    const { subscribe, set } = writable(false);
+
+    const turnOnLoading = () => {
+        set(true);
+        articlePageLock.set(true);
+    };
+
+    const turnOffLoading = () => {
+        set(false);
+        articlePageLock.set(false);
+    };
+
+    return {
+        subscribe,
+        turnOnLoading,
+        turnOffLoading,
+    };
+}
+
 function setArticleContent() {}
 function setArticleMode() {}
 function setComments() {}
@@ -192,8 +215,8 @@ function setAuthToken() {
 
 export const currentArticlesPage = setCurrentArticlesPage();
 export const articles = setArticles();
-export const loadingArticle = setLoadingArticle();
-export const articlePageLock = writable(false);
+export const loadingArticle = setLoadingArticle(); // 데이터를 받아오는 동안 로딩 중임을 나타내는 역할
+export const articlePageLock = writable(false); // 페이지 잠금 역할
 export const articleContent = setArticleContent();
 export const articlesMode = setArticleMode();
 export const comments = setComments();

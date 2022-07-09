@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
-    import { articles, currentArticlesPage } from '../stores';
+    // prettier-ignore
+    import { articles, currentArticlesPage, loadingArticle, articlePageLock } from '../stores';
     import Article from './Article.svelte';
 
     let component;
@@ -32,8 +33,19 @@
             return scrollTop > triggerHeight;
         };
 
+        const countCheck = () => {
+            const check = $articles.totalPage <= $currentArticlesPage;
+            return check;
+        };
+
+        // 페이지 증가를 방지
+        if (countCheck()) {
+            articlePageLock.set(true); // 얘는 구독이 아니라 set이라 $가 붙지 않아야함
+        }
+
+        // triggerComputed가 true이고 articlePageLock이 false일 때 true 리턴
         const scrollTrigger = () => {
-            return triggerComputed();
+            return triggerComputed() && !$articlePageLock; // 얘는 구독 개념이라 $가 붙어야함 (상태값 변화 추적)
         };
 
         if (scrollTrigger()) {
@@ -47,5 +59,10 @@
     {#each $articles.articleList as article, index}
         <Article {article} />
     {/each}
+    {#if $loadingArticle}
+        <div class="box mdl-grid mdl-grid--no-spacing">
+            <p>Loading...</p>
+        </div>
+    {/if}
 </div>
 <!-- end article-wrap -->
