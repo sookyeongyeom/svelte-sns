@@ -2,8 +2,85 @@ import { writable, get } from 'svelte/store';
 import { getApi, postApi, putApi, delApi } from './service/api';
 import { router } from 'tinro';
 
-function setCurrentArticlesPage() {}
-function setArticles() {}
+function setCurrentArticlesPage() {
+    const { subscribe, update, set } = writable(1); // 초기값 1페이지
+
+    const resetPage = () => set(1);
+    const increPage = () => {
+        update((data) => data++);
+        articles.fetchArticles();
+    };
+
+    return {
+        subscribe,
+        resetPage,
+        increPage,
+    };
+}
+
+function setArticles() {
+    let initValues = {
+        articleList: [],
+        totalPage: 0,
+        menuPopup: '',
+        editMode: '',
+    };
+
+    let values = { ...initValues };
+
+    const { subscribe, update, set } = writable(values);
+
+    const fetchArticles = async () => {
+        const currentPage = get(currentArticlesPage);
+
+        try {
+            let path = `/articles/${currentPage}`;
+
+            const options = {
+                path,
+            };
+
+            const getDatas = await getApi(options);
+
+            const newData = {
+                articleList: getDatas.articles, // 스키마 문서 오류
+                totalPage: getDatas.totalPage,
+            };
+
+            update((datas) => {
+                const newArticles = [
+                    ...datas.articleList,
+                    ...newData.articleList,
+                ];
+
+                if (currentPage === 1) {
+                    datas.articleList = newData.articleList;
+                    datas.totalPage = newData.totalPage;
+                }
+
+                datas.articleList = newArticles;
+                datas.totalPage = newData.totalPage;
+
+                return datas;
+            });
+        } catch (error) {
+            throw error;
+        }
+    };
+
+    const resetArticles = () => {
+        let resetValues = { ...initValues };
+        set(resetValues);
+        currentArticlesPage.resetPage();
+    };
+
+    return {
+        subscribe,
+        fetchArticles,
+        resetArticles,
+    };
+}
+
 function setLoadingArticle() {}
 function setArticleContent() {}
 function setArticleMode() {}
