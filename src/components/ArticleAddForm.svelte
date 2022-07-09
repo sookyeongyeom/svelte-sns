@@ -1,3 +1,25 @@
+<script>
+    import { articles } from '../stores';
+
+    let values = {
+        formContent: '',
+    };
+
+    const onAddArticle = async () => {
+        try {
+            await articles.addArticle(values.formContent);
+            onCancelAddArticle();
+            alert('새 글이 작성되었습니다.');
+        } catch (error) {
+            alert(error);
+        }
+    };
+
+    const onCancelAddArticle = () => {
+        values.formContent = '';
+    };
+</script>
+
 <!-- start article-add-form box -->
 <div class="box mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
     <div class="mdl-card mdl-cell mdl-cell--12-col comment-box">
@@ -14,17 +36,20 @@
                     rows="5"
                     id="sample5"
                     placeholder="내용을 입력해 주세요."
+                    bind:value={values.formContent}
                 />
             </div>
         </div>
         <div class="mdl-card__actions mdl-card--border btn-box">
             <a
                 href="#null"
-                class="mdl-button mdl-js-button mdl-js-ripple-effect">입력</a
+                class="mdl-button mdl-js-button mdl-js-ripple-effect"
+                on:click={onAddArticle}>입력</a
             >
             <a
                 href="#null"
-                class="mdl-button mdl-js-button mdl-js-ripple-effect">취소</a
+                class="mdl-button mdl-js-button mdl-js-ripple-effect"
+                on:click={onCancelAddArticle}>취소</a
             >
         </div>
     </div>

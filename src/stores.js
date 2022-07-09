@@ -78,10 +78,35 @@ function setArticles() {
         articlePageLock.set(false);
     };
 
+    const addArticle = async (content) => {
+        try {
+            const options = {
+                path: '/article',
+                data: {
+                    content,
+                },
+            };
+
+            const newArticle = await postApi(options);
+
+            update((datas) => {
+                datas.articleList = [newArticle, ...datas.articleList];
+                return datas;
+            });
+
+            // 만약 무조건적으로 새로운 글이 나타나야 한다면, update로 스토어를 업데이트하지 말고, 목록을 새로 불러오면 됨 (비효율적)
+            // articles.resetArticles();
+            // articles.fetchArticles();
+        } catch (error) {
+            throw error;
+        }
+    };
+
     return {
         subscribe,
         fetchArticles,
         resetArticles,
+        addArticle,
     };
 }
 
