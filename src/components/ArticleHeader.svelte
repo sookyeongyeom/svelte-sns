@@ -1,6 +1,6 @@
 <script>
     import { router } from 'tinro';
-    import { auth, authToken } from '../stores';
+    import { authToken } from '../stores';
 
     const goLogin = () => router.goto('/login');
     const onLogout = () => authToken.logout();
@@ -18,9 +18,9 @@
         </nav>
 
         {#if $authToken}
-            <i class="bx bx-log-out" on:click={onLogout} />
+            <i class="bx bx-log-in" on:click={onLogout} />
         {:else}
-            <i class="bx bx-log-in" on:click={goLogin} />
+            <i class="bx bx-log-out" on:click={goLogin} />
         {/if}
     </div>
 </header>

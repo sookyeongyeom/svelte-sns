@@ -81,6 +81,7 @@ function setAuthToken() {
             localStorage.setItem('authToken', token);
             set(token);
             router.goto('/articles');
+            alert('로그인되었습니다.');
         } catch (error) {
             alert('오류가 발생했습니다. 다시 시도해주세요.');
         }
@@ -93,6 +94,7 @@ function setAuthToken() {
             };
             await postApi(options);
             authToken.resetAuthToken();
+            alert('로그아웃되었습니다.');
         } catch (error) {
             alert('오류가 발생했습니다. 다시 시도해주세요');
         }

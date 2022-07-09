@@ -1,3 +1,21 @@
+<script>
+    import { auth } from '../stores';
+
+    let values = {
+        formEmail: '',
+        formPassword: '',
+        formPasswordConfirm: '',
+    };
+
+    const onRegister = async () => {
+        try {
+            await auth.register(values.formEmail, values.formPassword);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+</script>
+
 <!-- start main register box-->
 <main class="mdl-layout__content">
     <div class="box mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
@@ -7,6 +25,7 @@
                     class="mdl-textfield__input"
                     type="text"
                     placeholder="이메일"
+                    bind:value={values.formEmail}
                 />
             </div>
             <div class="mdl-textfield mdl-js-textfield">
@@ -14,6 +33,7 @@
                     class="mdl-textfield__input"
                     type="password"
                     placeholder="비밀번호"
+                    bind:value={values.formPassword}
                 />
             </div>
             <div class="mdl-textfield mdl-js-textfield">
@@ -21,13 +41,14 @@
                     class="mdl-textfield__input"
                     type="password"
                     placeholder="비밀번호 확인"
+                    bind:value={values.formPasswordConfirm}
                 />
             </div>
             <div class="mdl-card__actions btn-box">
                 <a
                     href="#null"
                     class="mdl-button mdl-js-button mdl-js-ripple-effect"
-                    >회원가입</a
+                    on:click={onRegister}>회원가입</a
                 >
             </div>
         </div>
